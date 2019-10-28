@@ -1,0 +1,97 @@
+---
+title: "Lab Six"
+author: "Jessica Canfield"
+date: "10/23/2019"
+output: 
+  pdf_document: 
+    highlight: haddock
+  html_document:
+    highlight: tango
+---
+
+```{r setup, include=FALSE}
+#knitr::opts_chunk$set(echo = TRUE)
+
+knitr::opts_chunk$set(eval = TRUE, warning = FALSE, echo = FALSE, fig.width = 6.5, fig.height = 4) 
+
+
+
+library(rio)
+library(here)
+library(tidyverse)
+library(janitor)
+library(skimr)
+library(dplyr)
+library(stats)
+library(knitr)
+
+theme_set(theme_minimal())
+```
+
+##Question 3
+```{r, echo = FALSE}
+eclsk <- import(here("data", "ecls-k_samp.sav")) %>%
+  characterize() #%>% 
+  #clean_names()
+
+#unique(eclsk$ethnic) 
+
+eclsk_subset <- eclsk %>% 
+  filter(ethnic == "WHITE, NON-HISPANIC" |
+           ethnic == "BLACK OR AFRICAN AMERICAN, NON-HISPANIC" |
+           ethnic == "HISPANIC, RACE NOT SPECIFIED" |
+           ethnic == "HISPANIC, RACE SPECIFIED")
+
+#eclsk_subset <- eclsk %>% filter(ethnic == "WHITE, NON-HISPANIC", ethnic == "BLACK OR AFRICAN AMERICAN, NON-HISPANIC", ethnic == "HISPANIC, RACE SPECIFIED",ethnic == "HISPANIC, RACE NOT SPECIFIED")
+
+#eclsk_subset <- eclsk %>% filter(ethnic == 1, ethnic == 2, ethnic == 3, ethnic == 4)
+ 
+#eclsk_subset <- eclsk %>% 
+  #filter(ethnic <= 4)
+
+ggplot(data = eclsk_subset, 
+       aes(x = T1MSCALE, y = T2MSCALE, color = factor(school_type))) +
+  geom_point(color = "black") +
+  facet_wrap(~ethnic) +
+  geom_smooth(method = "lm") + 
+  labs(color = "school_type")
+
+```
+
+\newpage
+
+##Question 4
+```{r, echo = TRUE}
+t1mean <- mean(eclsk$T1MSCALE, na.rm = TRUE) 
+t1sd <- sd(eclsk$T1MSCALE, na.rm = TRUE)
+
+t2mean <- mean(eclsk$T2MSCALE, na.rm = TRUE) 
+t2sd <- sd(eclsk$T2MSCALE, na.rm = TRUE)
+
+```
+ 
+----
+The *mean/SD* at time 1 is `r t1mean/t1sd` and at time 2 is `r round(t2mean/t2sd, 2)`. Additionally, the difference between the means between time 1 and time 2 is `r abs(round(t2mean-t1mean, 2)`.
+----
+
+##Question 5
+
+There are several different ways to import data. One way to go about importing any kind of data is through the point and click menu in the top menu bar. However, R is not a point-and-click software and going about importing data this way creates a script that is not fully reproducible by another person. This is because if someone else were to open your file, they would have to change the working directory to where they are saving things on their own computer. Below is the working directory on my computer. If you were to run this on your own computer, obviously the result would be an error message. 
+
+```{r example1, eval=FALSE, echo=TRUE}
+
+setwd("~/Dropbox/UO Marketing PhD Program/Coursework/Fall 2019/EDLD 610/Labs/Lab_six")
+
+```
+
+An alternative approach is to use the rio and here packages, The benefit of importing data through `rio` is that it works well with a wide variety of file types. Unlike the above code chunk, the chunk below contains no pathway that only exists on my computer which means that another person could reproduce the code without having to make any changes. 
+
+```{r example2, eval=FALSE, echo=TRUE}
+
+library(here)
+library(rio)
+
+eclsk <- import(here("data", "ecls-k_samp.sav"))
+
+```
+

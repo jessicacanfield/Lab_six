@@ -9,6 +9,10 @@ output:
     highlight: tango
 ---
 
+These are changes to a file for the merge conflict activity. 
+Hopefully this works. 
+
+
 ```{r setup, include=FALSE}
 #knitr::opts_chunk$set(echo = TRUE)
 
